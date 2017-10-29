@@ -635,6 +635,11 @@ x86_cpus="generic intel"
 
 # Common parts for widely ported systems.
 case ${target} in
+*-*-ikaros*)
+  gas=yes
+  gnu_ld=yes
+  default_use_cxa_atexit=yes
+  ;;
 *-*-darwin*)
   tmake_file="t-darwin ${cpu_type}/t-darwin"
   tm_file="${tm_file} darwin.h"
@@ -927,6 +932,34 @@ case ${target} in
 esac
 
 case ${target} in
+i[34567]86-*-ikaros*)
+    tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h glibc-stdint.h i386/i386elf.h ikaros.h"
+    ;;
+x86_64-*-ikaros*)
+    tm_file="${tm_file} i386/unix.h i386/att.h dbxelf.h elfos.h glibc-stdint.h i386/i386elf.h i386/x86-64.h ikaros.h"
+    ;;
+aarch64-*-ikaros*)
+	tm_file="${tm_file} dbxelf.h elfos.h glibc-stdint.h aarch64/aarch64-elf.h ikaros.h"
+	tmake_file="${tmake_file} aarch64/t-aarch64"
+	;;
+arm-*-ikaros*)
+	tm_file="dbxelf.h elfos.h arm/elf.h ikaros.h"
+	tmake_file="${tmake_file} arm/t-arm arm/t-bpabi"
+	tm_file="${tm_file} arm/bpabi.h arm/arm.h"
+	case $target in
+	armv6-*-ikaros*)
+	    target_cpu_cname="arm1176jzf-s"
+			tm_defines="${tm_defines} TARGET_IKAROS_ARM_HARD_FLOAT=1"
+	    ;;
+	armv7-*-ikaros*)
+	    target_cpu_cname="generic-armv7-a"
+	    tm_defines="${tm_defines} TARGET_IKAROS_ARM_HARD_FLOAT=1"
+	    ;;
+	*)
+	    target_cpu_cname="arm9"
+	    ;;
+	esac
+	;;
 aarch64*-*-elf | aarch64*-*-fuchsia* | aarch64*-*-rtems*)
 	tm_file="${tm_file} dbxelf.h elfos.h newlib-stdint.h"
 	tm_file="${tm_file} aarch64/aarch64-elf.h aarch64/aarch64-elf-raw.h"
